@@ -1,3 +1,40 @@
+
+> XV6 repo for Polimi AOS Students 
+
+This repo has been forked from the original Unix V6 port to RISCV. You can
+inspect the code, or even run it in an emulator (qemu) in a docker container.
+
+# Build and aunch the container 
+
+Cwd in the `scripts` directory; to build:
+
+```sh
+make build
+```
+
+this will take time as it has to download all the necessary toolchains. Once build, 
+launch the interactive shell:
+
+```sh 
+make connect
+```
+
+Once in the container, to compile the kernel:
+
+```sh
+cd /local && make TOOLPREFIX=/opt/riscv/toolchain/bin/riscv64-unknown-elf-
+```
+
+To run it on qemu
+
+``` sh
+cd /local && make TOOLPREFIX=/opt/riscv/toolchain/bin/riscv64-unknown-elf- qemu
+```
+
+
+# Original XV6 readme 
+
+```
 xv6 is a re-implementation of Dennis Ritchie's and Ken Thompson's Unix
 Version 6 (v6).  xv6 loosely follows the structure and style of v6,
 but is implemented for a modern RISC-V multiprocessor using ANSI C.
@@ -43,3 +80,4 @@ You will need a RISC-V "newlib" tool chain from
 https://github.com/riscv/riscv-gnu-toolchain, and qemu compiled for
 riscv64-softmmu. Once they are installed, and in your shell
 search path, you can run "make qemu".
+```
