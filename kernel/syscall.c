@@ -7,6 +7,32 @@
 #include "syscall.h"
 #include "defs.h"
 
+
+char* syscall_names[] = {
+"SYS_fork",   
+"SYS_exit",   
+"SYS_wait",   
+"SYS_pipe",   
+"SYS_read",   
+"SYS_kill",   
+"SYS_exec",   
+"SYS_fstat",  
+"SYS_chdir",  
+"SYS_dup",    
+"SYS_getpid", 
+"SYS_sbrk",   
+"SYS_sleep",  
+"SYS_uptime", 
+"SYS_open",   
+"SYS_write",  
+"SYS_mknod",  
+"SYS_unlink", 
+"SYS_link",   
+"SYS_mkdir",  
+"SYS_close",  
+"SYS_trace"  
+};
+
 // Fetch the uint64 at addr from the current process.
 int
 fetchaddr(uint64 addr, uint64 *ip)
@@ -104,6 +130,7 @@ extern uint64 sys_unlink(void);
 extern uint64 sys_wait(void);
 extern uint64 sys_write(void);
 extern uint64 sys_uptime(void);
+extern uint64 sys_trace(void);
 
 static uint64 (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -127,6 +154,8 @@ static uint64 (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
+[SYS_trace]   sys_trace,
+
 };
 
 void
@@ -135,12 +164,21 @@ syscall(void)
   int num;
   struct proc *p = myproc();
 
+  // acquire(&p->lock);
+  // int pid = p->pid;
+  int mask = p->trace;
+  // release(&p->lock);
+
   num = p->trapframe->a7;
+  // printf("Before : %d", p->trapframe->a0);
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
     p->trapframe->a0 = syscalls[num]();
   } else {
     printf("%d %s: unknown sys call %d\n",
             p->pid, p->name, num);
     p->trapframe->a0 = -1;
+  }
+  if(((mask>>num) & 1) == 1){
+    printf("\n%d: Traced  %s -> %d\n", p->pid, syscall_names[--num], p->trapframe->a0);
   }
 }

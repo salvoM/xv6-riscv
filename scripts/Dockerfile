@@ -13,11 +13,11 @@ RUN git submodule update --init --recursive
 RUN ./configure --prefix=/opt/riscv/toolchain
 RUN make
 RUN make install
-RUN apt-get install -y python3 python3-pip ninja-build pkg-config libglib2.0-dev libpixman-1-dev
+RUN apt-get install -y python3 python3-pip ninja-build pkg-config libglib2.0-dev libpixman-1-dev nano gdb
 WORKDIR /root/riscv-gnu-toolchain/qemu
 RUN ./configure --target-list=riscv64-softmmu
-RUN make -j4
+RUN make -j12
 RUN make install
-
+WORKDIR /local
 
 
